@@ -1,0 +1,17 @@
+dependencies {
+    implementation 'org.apache.kafka:kafka-streams:4.0.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.3'
+    implementation 'ch.qos.logback:logback-classic:1.5.18'
+}
+
+tasks.named('jar') {
+    manifest {
+        attributes 'Main-Class': 'kz.yandex_practicum.kafka.message_producer.MessageProducerLauncher'
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
