@@ -1,0 +1,56 @@
+# Docker Compose файл для запуска Java сервисов
+
+networks:
+  project-2:
+    driver: bridge
+
+services:
+
+  # Producer сервис для публикации заблокированных пользователей
+  blocklist-producer:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: blocklist-producer
+    container_name: blocklist-producer
+    networks:
+      - project-2
+
+  # Producer сервис для публикации правил цензуры
+  censure-producer:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: censure-producer
+    container_name: censure-producer
+    networks:
+      - project-2
+
+  # Producer сервис для публикации сообщений
+  message-producer:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: message-producer
+    container_name: message-producer
+    networks:
+      - project-2
+
+  # Kafka Stream сервис для обработки сообщений
+  filter-processor:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE_NAME: filter-processor
+    networks:
+      - project-2
+    deploy:
+      replicas: 2 # Количество реплик

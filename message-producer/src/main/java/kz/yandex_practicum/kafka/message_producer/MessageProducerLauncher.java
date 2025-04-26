@@ -47,23 +47,32 @@ public class MessageProducerLauncher {
     private static void startPublishingMessage(Producer<String, Message> producer) {
         while (true) {
             try {
-                Thread.sleep(ThreadLocalRandom.current().nextInt(3_000, 6_000)); // Ждем от 3000 мс до 6000 мс перед публикацией следующего сообщения
+                Thread.sleep(ThreadLocalRandom.current().nextInt(7_000, 10_000)); // Ждем от 3000 мс до 6000 мс перед публикацией следующего сообщения
             } catch (InterruptedException e) {
                 LOGGER.error("Ошибка при публикации сообщения (InterruptedException)", e);
                 continue; // Прерываем цикл, если поток был прерван
             }
 
-            Message value = new Message(); // Случайный текст сообщения с возможной (50% вероятностью) нецензурной лексикой
+            publish(producer); // Публикуем сообщение
+        }
+    }
 
-            LOGGER.info("Публикуем сообщение: {}", value);
+    /**
+     * Публикует сообщение в Kafka.
+     *
+     * @param producer настроенный продюсер для публикации сообщений.
+     */
+    private static void publish(Producer<String, Message> producer) {
+        Message value = new Message(); // Случайный текст сообщения с возможной (50% вероятностью) нецензурной лексикой
 
-            ProducerRecord<String, Message> record = new ProducerRecord<>(TOPIC_NAME, value);
+        LOGGER.info("Публикуем сообщение: {}", value);
 
-            try {
-                producer.send(record);
-            } catch (Exception e) {
-                LOGGER.error("Ошибка при публикации сообщения", e);
-            }
+        ProducerRecord<String, Message> record = new ProducerRecord<>(TOPIC_NAME, value.getTo(), value);
+
+        try {
+            producer.send(record);
+        } catch (Exception e) {
+            LOGGER.error("Ошибка при публикации сообщения", e);
         }
     }
 }

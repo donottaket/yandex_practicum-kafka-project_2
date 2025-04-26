@@ -48,7 +48,7 @@ public class BlocklistProducerLauncher {
             publish(producer);
 
             try {
-                Thread.sleep(2_000); // Ждем 2 секунд перед публикацией следующего сообщения
+                Thread.sleep(15_000); // Ждем 15 секунд перед публикацией следующего сообщения
             } catch (InterruptedException e) {
                 LOGGER.error("Ошибка при публикации списка заблокированных пользователей (InterruptedException)", e);
             }

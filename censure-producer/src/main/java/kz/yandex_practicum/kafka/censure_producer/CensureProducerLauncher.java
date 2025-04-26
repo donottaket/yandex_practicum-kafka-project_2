@@ -21,12 +21,12 @@ public class CensureProducerLauncher {
     private static final String TOPIC_NAME;
     private static final Properties PROPERTIES;
 
-    private static int BAD_WORD_INDEX;
+    private static int WORD_INDEX;
 
     static {
         TOPIC_NAME = "censure"; // Название топика
 
-        BAD_WORD_INDEX = 1; // Индекс слов нецензурной лексики. Необходим для генерации уникальных слов нецензурной лексики
+        WORD_INDEX = 1; // Индекс слов нецензурной лексики. Необходим для генерации уникальных слов нецензурной лексики
 
         PROPERTIES = new Properties();
         PROPERTIES.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka-broker-0:9092,kafka-broker-1:9092,kafka-broker-2:9092"); // Адреса брокеров Kafka
@@ -49,25 +49,34 @@ public class CensureProducerLauncher {
      */
     private static void startPublishingCensure(Producer<String, String> producer) {
         while (true) {
-            for (int i = 0; i < 5; ++i) {
-                LOGGER.info("Публикуем допустимые синонимы запрещенных слов: bad = '{}', good = '{}'", "badword" + BAD_WORD_INDEX, "goodword" + BAD_WORD_INDEX);
-
-                ProducerRecord<String, String> record = new ProducerRecord<>(TOPIC_NAME, "badword" + BAD_WORD_INDEX, "goodword" + BAD_WORD_INDEX);
-
-                try {
-                    producer.send(record);
-                } catch (Exception e) {
-                    LOGGER.error("Ошибка при публикации допустимых синонимов запрещенных слов", e);
-                }
-
-                ++BAD_WORD_INDEX;
-            }
+            publish(producer);
 
             try {
-                Thread.sleep(5_000); // Ждем 5 секунд перед публикацией следующего сообщения
+                Thread.sleep(15_000); // Ждем 15 секунд перед публикацией следующего сообщения
             } catch (InterruptedException e) {
                 LOGGER.error("Ошибка при публикации допустимых синонимов запрещенных слов (InterruptedException)", e);
             }
+        }
+    }
+
+    /**
+     * Публикует допустимые синонимы запрещенных слов в Kafka.
+     *
+     * @param producer настроенный продюсер для публикации допустимых синонимов запрещенных слов.
+     */
+    private static void publish(Producer<String, String> producer) {
+        for (int i = 0; i < 3; ++i) {
+            LOGGER.info("Публикуем допустимые синонимы запрещенных слов: bad = '{}', good = '{}'", "badword" + WORD_INDEX, "goodword" + WORD_INDEX);
+
+            ProducerRecord<String, String> record = new ProducerRecord<>(TOPIC_NAME, "badword" + WORD_INDEX, "goodword" + WORD_INDEX);
+
+            try {
+                producer.send(record);
+            } catch (Exception e) {
+                LOGGER.error("Ошибка при публикации допустимых синонимов запрещенных слов", e);
+            }
+
+            ++WORD_INDEX;
         }
     }
 }

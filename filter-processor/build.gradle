@@ -6,7 +6,7 @@ dependencies {
 
 tasks.named('jar') {
     manifest {
-        attributes 'Main-Class': 'kz.yandex_practicum.kafka.message_producer.MessageProducerLauncher'
+        attributes 'Main-Class': 'kz.yandex_practicum.kafka.filter_processor.MessageFilterProcessor'
     }
 
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE

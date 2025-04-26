@@ -26,6 +26,9 @@ public class Blocklist {
     private final String user; // Пользователь
     private final Set<String> blocklist; // Список заблокированных пользователей
 
+    /**
+     * Конструктор, который создает случайный список заблокированных пользователей.
+     */
     public Blocklist() {
         this.user = USER_LIST.get(ThreadLocalRandom.current().nextInt(USER_LIST.size())); // Случайный пользователь
         this.blocklist = new HashSet<>();
